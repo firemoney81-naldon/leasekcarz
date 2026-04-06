@@ -1,23 +1,454 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Home</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <!--
-      Need a visual blank slate?
-      Remove all code in `styles.css`!
-    -->
-    <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="script.js"></script>
-  </head>
-  <body>
-    <nav>
-      <a href="/" aria-current="page">Home</a>
-      <a href="/page2.html">Other page</a>
+
+  <style>
+    /* Reset and Typography */
+    body { font-family: 'Noto Sans KR', sans-serif; line-height: 1.7; margin: 0; padding: 0; background-color: #fcfcfc; color: #333; }
+    h1, h2, h3, h4 { color: #004aad; font-weight: 700; }
+    h1 { font-size: 2.5rem; line-height: 1.2; }
+    h2 { font-size: 2rem; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 40px; }
+    h3 { font-size: 1.5rem; color: #2a6cb9; margin-top: 30px; }
+    h4 { font-size: 1.2rem; margin-top: 20px; color: #555; }
+    p { margin-bottom: 1.2rem; }
+    ul, ol { padding-left: 20px; margin-bottom: 1.2rem; list-style-type: disc; }
+    ol li { counter-increment: li; margin-bottom: 8px; font-weight: 500; }
+    ol li::marker { content: counter(li); font-weight: bold; color: #004aad; }
+
+    /* Layout and Containers */
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px 20px; }
+    header { background: linear-gradient(135deg, #fefefe, #f4f6f8); padding: 40px 20px; border-bottom: 1px solid #eee; text-align: center; }
+    section { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; padding: 30px; }
+    footer { background: #f4f6f8; padding: 30px 20px; text-align: center; border-top: 1px solid #eee; }
+
+    /* Navigation (TOC) */
+    nav.toc { background: #eef4f9; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
+    nav.toc ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+    nav.toc ul li { flex: 1 1 calc(33% - 20px); min-width: 150px; }
+    nav.toc ul li a { display: block; padding: 10px 15px; background: #fff; border-radius: 20px; text-align: center; font-weight: 600; color: #004aad; transition: background-color 0.3s ease, color 0.3s ease; border: 1px solid #ddd; }
+    nav.toc ul li a:hover { background: #004aad; color: #fff; }
+
+    /* CTA Button */
+    .btn-cta {
+      display: inline-block;
+      padding: 14px 30px;
+      background: #0070f3;
+      color: #fff;
+      font-weight: 700;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0, 112, 243, 0.4);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      text-align: center;
+      margin: 20px auto;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+    }
+    .btn-cta:hover { background: #005bb5; transform: translateY(-2px); }
+
+    /* Table Styling */
+    table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 20px 0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #004aad; color: #fff; font-weight: 600; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Form Styling */
+    form { background: #f4f6f8; padding: 30px; border-radius: 12px; max-width: 600px; margin: 20px auto; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+    input[type="text"], input[type="tel"], input[type="email"], select, textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    textarea { resize: vertical; }
+
+    /* Image Styling */
+    .content-image { width: 100%; border-radius: 10px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .image-caption { text-align: center; font-size: 0.9rem; color: #777; margin-top: 5px; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.7rem; }
+      h3 { font-size: 1.3rem; }
+      nav.toc ul { display: block; }
+      nav.toc ul li { min-width: auto; margin-bottom: 10px; }
+      .container { padding: 10px; }
+    }
+
+    /* Anchor Offset for better navigation */
+    .anchor { display: block; position: relative; top: -100px; visibility: hidden; }
+  </style>
+
+  <!-- Schema.org LocalBusiness Markup (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AutoRental",
+    "name": "BMW X4 리스 비교 전문",
+    "image": "https://yourdomain.com/bmw-x4-main-image.jpg",
+    "url": "https://yourdomain.com/bmw-x4-lease-2026",
+    "telephone": "1661-1234",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "서울 강남구 테헤란로 123",
+      "addressLocality": "서울",
+      "addressRegion": "강남구",
+      "postalCode": "06132",
+      "addressCountry": "KR"
+    },
+    "areaServed": [
+      { "@type": "City", "name": "서울" },
+      { "@type": "City", "name": "경기" },
+      { "@type": "City", "name": "인천" },
+      { "@type": "City", "name": "부산" },
+      { "@type": "City", "name": "대구" },
+      { "@type": "City", "name": "대전" }
+    ],
+    "priceRange": "₩₩₩",
+    "description": "2026년형 BMW X4 리스, 장기렌트 전문 비교 견적 서비스. M40i를 포함한 모든 X4 모델의 최신 프로모션과 정확한 가격 정보를 제공합니다."
+  }
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>BMW X4 리스 2026년형<br />전문 비교 견적 가이드</h1>
+      <p>럭셔리 스포츠 쿠페 SUV, X4를 가장 합리적인 조건으로 소유하는 방법.<br />최신 프로모션과 예상 견적을 지금 바로 확인하세요.</p>
+      <button class="btn-cta" onclick="location.href='#contact'">1:1 맞춤 견적 상담 신청</button>
+    </header>
+
+    <nav aria-label="페이지 내 이동" class="toc">
+      <ul>
+        <li><a href="#intro-x4">X4 리스란 무엇인가요?</a></li>
+        <li><a href="#models-spec">X4 모델별 제원 및 가격</a></li>
+        <li><a href="#pros-cons">리스의 장점과 단점</a></li>
+        <li><a href="#price-guide">예상 견적 및 비용 분석</a></li>
+        <li><a href="#comparison">리스/렌트 비교</a></li>
+        <li><a href="#top-providers">추천 리스 업체 순위</a></li>
+        <li><a href="#faq">자주 묻는 질문(FAQ)</a></li>
+        <li><a href="#contact">전문가 견적 문의</a></li>
+      </ul>
     </nav>
-    <main>
-      <h1>Home page</h1>
-    </main>
-  </body>
-</html>
+
+    <section id="intro-x4">
+      <span id="intro-x4-anchor" class="anchor"></span>
+      <h2>BMW X4, 왜 리스로 선택해야 하는가?</h2>
+      <p>BMW X4는 쿠페형 디자인과 SUV의 실용성을 결합한 SAV(Sport Activity Vehicle)로, 국내 시장에서 꾸준한 인기를 얻고 있습니다. 2026년형 모델은 이전 세대보다 더욱 세련된 디자인과 첨단 기술이 적용되어 기대감을 높이고 있습니다. X4와 같은 고가 차량은 초기 구매 비용이 높고, 감가상각이 크다는 특징이 있습니다. 이때 '리스(Lease)'는 초기 부담을 줄이고 합리적인 비용으로 차량을 운용할 수 있는 효과적인 대안으로 주목받습니다.</p>
+      <p>많은 소비자들이 X4 구매를 고민할 때, 단순한 '할부' 대신 '리스'를 고려하는 이유는 무엇일까요? 리스는 차량 가격의 일부만을 납입하고 정해진 기간 동안 차량을 이용한 후 반납할 수 있습니다. 특히 사업자의 경우 월 리스료 전액을 손비 처리하여 세금 절감 효과를 볼 수 있다는 큰 장점이 있습니다. 또한, X4와 같이 신형 모델이 자주 출시되는 수입차의 경우, 리스 계약 기간 만료 후 신모델로 쉽게 교체할 수 있어 트렌드에 민감한 운전자에게 특히 매력적입니다.</p>
+
+      <h3>2026년형 X4 주요 특징</h3>
+      <ul>
+        <li><strong>파워트레인 다양화:</strong> 2026년형 X4는 xDrive20i 가솔린 모델, xDrive20d 디젤 모델 외에도 고성능 M40i 모델이 인기를 끌고 있습니다. 특히 M40i는 6기통 엔진의 강력한 퍼포먼스로 스포티한 주행 경험을 제공합니다.</li>
+        <li><strong>디지털콕핏:</strong> 최신 iDrive 8.5 시스템이 적용된 커브드 디스플레이는 운전자에게 최적화된 정보 제공과 뛰어난 시각적 만족감을 선사합니다.</li>
+        <li><strong>안전 및 편의사양 강화:</strong> 향상된 ADAS(첨단 운전자 보조 시스템) 기능과 편의 사양이 기본 탑재되어, X4의 주행 안전성을 높이고 편안한 주행 환경을 보장합니다.</li>
+      </ul>
+
+      <img src="https://images.pexels.com/photos/10834123/pexels-photo-10834123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="BMW X4 리스" class="content-image" />
+      <p class="image-caption">Image Source: Pexels.com - BMW X4 in a modern setting. A symbol of luxury leasing.</p>
+    </section>
+
+    <section id="models-spec">
+      <span id="models-spec-anchor" class="anchor"></span>
+      <h2>BMW X4 주요 모델 제원 및 기본 가격 비교</h2>
+      <p>X4는 다양한 파워트레인과 트림 옵션을 제공하여 운전자의 취향과 주행 환경에 맞춰 선택할 수 있습니다. 2026년형 모델의 예상 기본 가격과 주요 제원을 비교하여 자신에게 맞는 모델을 찾아보세요.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>모델명</th>
+            <th>기본 가격 (예상)</th>
+            <th>엔진/연료</th>
+            <th>최고 출력</th>
+            <th>0-100km/h 가속</th>
+            <th>주요 특징</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>X4 xDrive20i</td>
+            <td>약 7,000만 원</td>
+            <td>I4 가솔린</td>
+            <td>184마력</td>
+            <td>8.3초</td>
+            <td>가장 저렴한 가격, 일상 주행에 적합</td>
+          </tr>
+          <tr>
+            <td>X4 xDrive30i</td>
+            <td>약 7,800만 원</td>
+            <td>I4 가솔린</td>
+            <td>245마력</td>
+            <td>6.3초</td>
+            <td>균형 잡힌 성능, 대중적인 선택</td>
+          </tr>
+          <tr>
+            <td>X4 M40i</td>
+            <td>약 9,500만 원</td>
+            <td>I6 가솔린</td>
+            <td>387마력</td>
+            <td>4.5초</td>
+            <td>고성능 M 퍼포먼스 모델, 강력한 주행감</td>
+          </tr>
+          <tr>
+            <td>X4 xDrive20d</td>
+            <td>약 7,200만 원</td>
+            <td>I4 디젤</td>
+            <td>190마력</td>
+            <td>7.9초</td>
+            <td>고연비, 긴 주행거리 운전자에게 유리</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>참고:</strong> 위 가격은 2026년형 모델의 예상 기본 가격이며, 트림 옵션(M Sport Package, Driving Assistant Pro 등) 및 프로모션 할인, 리스사별 조건에 따라 최종 금액이 달라질 수 있습니다. 정확한 견적은 전문가 상담을 통해 확인하는 것이 좋습니다.</p>
+    </section>
+
+    <section id="pros-cons">
+      <span id="pros-cons-anchor" class="anchor"></span>
+      <h2>X4 리스의 장점과 단점: 리스 vs. 구매 비교</h2>
+      <p>X4 리스를 결정하기 전에 장점과 단점을 명확히 파악하는 것이 중요합니다. 특히 ‘내돈내산’ 후기를 보면 리스 계약 조건을 꼼꼼히 따져보지 않아 후회하는 경우도 많습니다. 리스 계약은 신규 가입 혜택만큼이나 주의사항도 많습니다.</p>
+
+      <h3>X4 리스의 장점 (Advantages)</h3>
+      <ol>
+        <li><strong>초기 비용 절감 및 세금 혜택 (사업자):</strong> 차량 구매 시 발생하는 취득세, 등록세, 자동차세, 보험료 등을 월 리스료에 포함하여 납부하므로 초기 비용 부담이 적습니다. 특히 사업자는 리스료를 전액 비용 처리하여 종합소득세나 법인세를 절감할 수 있는 강력한 혜택이 있습니다.</li>
+        <li><strong>신차 교체 용이성:</strong> 계약 기간 만료 후 차량을 반납하고 새로운 X4나 다른 신차로 교체하기 쉽습니다. 이는 X4 M40i처럼 감가상각이 높은 고가 차량을 선호하는 소비자에게 큰 이점입니다.</li>
+        <li><strong>차량 관리 편리성:</strong> 리스사 명의로 차량이 등록되므로, 차량 정비 및 관리 서비스를 리스사를 통해 받을 수 있습니다. 복잡한 차량 관리에 신경 쓸 필요가 없어 편리합니다.</li>
+        <li><strong>할인 및 프로모션 적용:</strong> 리스 전문 업체들은 대량 구매를 통해 더 많은 할인을 받기 때문에, 개인이 직접 구매할 때보다 더 저렴한 가격으로 차량을 출고할 수 있습니다.</li>
+      </ol>
+
+      <h3>X4 리스의 단점 (Disadvantages)</h3>
+      <ol>
+        <li><strong>총 지출 금액 증가 가능성:</strong> 리스는 이자 비용이 포함되어 있어 장기적으로 보면 현금 구매보다 총액이 높아질 수 있습니다.</li>
+        <li><strong>약정 주행거리 제한:</strong> 대부분의 리스 계약에는 연간 주행거리 제한이 있습니다. 주행거리 초과 시 추가 비용이 발생하므로 주행량이 많은 운전자에게는 불리합니다.</li>
+        <li><strong>중도 해지 수수료:</strong> 계약 기간 중 해지 시 위약금이 높습니다. 신중한 계약 기간 설정이 필요합니다.</li>
+        <li><strong>보험 경력 단절:</strong> 리스 차량의 보험은 리스사 명의로 가입되는 경우가 많아 개인의 보험 경력이 단절될 수 있습니다.</li>
+      </ol>
+      <img src="https://images.pexels.com/photos/10141630/pexels-photo-10141630.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="리스 계약서 검토" class="content-image" />
+      <p class="image-caption">Image Source: Pexels.com - Meticulously checking a contract. A critical step before signing an X4 lease agreement.</p>
+    </section>
+
+    <section id="price-guide">
+      <span id="price-guide-anchor" class="anchor"></span>
+      <h2>BMW X4 예상 견적 및 비용 분석: 월 리스료 얼마일까?</h2>
+      <p>많은 분들이 X4 리스 비용이 '얼마'인지 궁금해합니다. X4의 월 리스료는 차량 가격, 리스 기간, 보증금/선납금 여부, 잔존가치, 금리 등 복합적인 요인에 의해 결정됩니다. 특히 리스 전문 업체 간의 금리 차이가 크기 때문에 여러 곳을 비교해 보는 것이 중요합니다. 아래는 2026년형 X4 xDrive20i M Sport 모델을 기준으로 한 예상 견적 비교표입니다.</p>
+
+      <h3>X4 xDrive20i M Sport 예상 리스 비용 비교 (2026년)</h3>
+      <p>차량가: 7,500만 원 | 리스 기간: 48개월 | 주행거리: 연 2만 km 기준</p>
+      <table>
+        <thead>
+          <tr>
+            <th>견적 조건</th>
+            <th>보증금 0% (초기 비용 0)</th>
+            <th>보증금 10% (750만 원)</th>
+            <th>선납금 10% (750만 원)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>월 리스료 (평균 금액)</td>
+            <td>130만 원 ~ 145만 원</td>
+            <td>115만 원 ~ 130만 원</td>
+            <td>100만 원 ~ 115만 원</td>
+          </tr>
+          <tr>
+            <td>총 지출 금액 (4년)</td>
+            <td>5,760만 원 (원금+이자)</td>
+            <td>5,520만 원 (월납+보증금)</td>
+            <td>4,800만 원 (월납+선납금)</td>
+          </tr>
+          <tr>
+            <td>잔존가치 (예상)</td>
+            <td colspan="3">3,000만 원 ~ 3,300만 원 (차량가 대비 40% 내외)</td>
+          </tr>
+          <tr>
+            <td>특징</td>
+            <td>초기 부담 최소화, 월 납입액 높음</td>
+            <td>보증금 환급 가능, 금리 인하 효과</td>
+            <td>총 비용 절감 효과, 선납금 환급 불가</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>X4 리스 견적을 낮추는 팁: 저렴한곳 찾기</h4>
+      <p>X4 리스 견적은 어디서 받느냐에 따라 천차만별입니다. 특히 '저렴한곳'을 찾는 소비자들은 여러 업체들을 비교합니다. 리스 비용을 낮추려면 다음과 같은 팁을 활용하세요.</p>
+      <ul>
+        <li><strong>리스 기간 조정:</strong> 48개월 또는 60개월처럼 장기간 계약할수록 월 납입금액은 낮아집니다.</li>
+        <li><strong>보증금/선납금 활용:</strong> 초기 비용을 많이 납부할수록 월 리스료가 줄어듭니다. 보증금은 만기 시 환급받을 수 있으므로 자금 여력이 된다면 보증금 10~20%를 넣는 것을 추천합니다.</li>
+        <li><strong>프로모션 활용:</strong> 리스사별로 매달 진행하는 프로모션이나 '할인' 혜택을 반드시 확인해야 합니다. 신규 가입 혜택이나 재고 할인을 이용하면 최대 수백만 원의 차이가 발생할 수 있습니다.</li>
+        <li><strong>잔존가치 설정:</strong> 잔존가치를 높게 설정하면 월 리스료가 낮아집니다. 다만, 만기 후 인수할 계획이라면 총 비용을 고려하여 신중하게 설정해야 합니다.</li>
+      </ul>
+    </section>
+
+    <section id="comparison">
+      <span id="comparison-anchor" class="anchor"></span>
+      <h2>BMW X4 리스 vs. 장기렌트 vs. 할부: 장단점 차이점</h2>
+      <p>X4를 운용하는 방법은 리스 외에도 장기렌트와 할부가 있습니다. 각 방법은 장단점이 뚜렷하므로, 자신의 상황에 맞는 최적의 방법을 선택하는 것이 중요합니다. 특히 ‘리스’와 ‘장기렌트’의 차이점을 혼동하는 경우가 많으니 아래 표를 통해 비교해 보세요.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>X4 리스 (운용리스)</th>
+            <th>X4 장기렌트</th>
+            <th>X4 할부 (구매)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>차량 소유 명의</td>
+            <td>리스사</td>
+            <td>렌터카 회사</td>
+            <td>개인 (or 금융사)</td>
+          </tr>
+          <tr>
+            <td>번호판</td>
+            <td>일반 번호판 (하, 호, 허 제외)</td>
+            <td>렌터카 번호판 (하, 호, 허)</td>
+            <td>일반 번호판</td>
+          </tr>
+          <tr>
+            <td>보험 처리</td>
+            <td>개인 보험 요율 적용 (개인 보험 경력 유지)</td>
+            <td>렌터카 회사 보험 적용 (개인 보험 경력 단절)</td>
+            <td>개인 보험 요율 적용</td>
+          </tr>
+          <tr>
+            <td>세금 혜택 (사업자)</td>
+            <td>리스료 전액 비용 처리 (연 1,500만 원 한도)</td>
+            <td>렌탈료 전액 비용 처리 (연 1,500만 원 한도)</td>
+            <td>감가상각비, 유류비 등 비용 처리</td>
+          </tr>
+          <tr>
+            <td>만기 후 선택</td>
+            <td>반납, 인수, 재리스</td>
+            <td>반납, 인수</td>
+            <td>내 차량 (소유)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>결론:</strong> X4 리스는 개인 사업자나 법인 사업자가 번호판 노출 없이 세금 혜택을 누리며 차량을 운용하고자 할 때 가장 적합합니다. 반면 장기렌트는 초기 비용이 적고 보험료 부담이 없다는 장점이 있습니다. 할부는 만기 후 완전히 자신의 소유가 되므로 '내돈내산'을 선호하고 주행거리 제한 없이 자유롭게 운전하고 싶은 분들에게 유리합니다. 어떤 선택이 가장 합리적인지는 개인의 운용 목적과 재정 상황에 따라 달라집니다.</p>
+    </section>
+
+    <section id="top-providers">
+      <span id="top-providers-anchor" class="anchor"></span>
+      <h2>BMW X4 리스 전문 업체 순위 비교 및 추천 (2026년 기준)</h2>
+      <p>X4 리스 견적을 비교할 때 중요한 것은 금리가 저렴한 '전문 업체'를 찾는 것입니다. 2026년 현재 시장에서 X4 리스를 전문적으로 다루는 곳들은 다양한 프로모션과 신규 가입 혜택을 제공하고 있습니다. 단순히 월 납입료가 낮은 '싼곳'을 찾기보다, 금융 조건과 사후 관리 서비스를 함께 고려해야 합니다.</p>
+
+      <img src="https://images.pexels.com/photos/1572002/pexels-photo-1572002.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="리스 비교 상담" class="content-image" />
+      <p class="image-caption">Image Source: Pexels.com - Professional consultation. Choosing a reliable leasing company is critical.</p>
+
+      <h3>추천 리스 업체 TOP 5 (2026년 기준)</h3>
+      <ol>
+        <li><strong>A 리스 금융사:</strong> BMW 파이낸셜 서비스 연계로 공식 프로모션 할인율이 높습니다. 다만, 심사 기준이 다소 까다로운 편입니다.</li>
+        <li><strong>B 비교 견적 플랫폼:</strong> 여러 금융사와 제휴를 맺어 X4 견적 비교에 최적화된 시스템을 갖추고 있습니다. '최저가'를 찾는 소비자에게 유리합니다.</li>
+        <li><strong>C 캐피탈사:</strong> 리스 심사 기준이 유연하고 초기 비용 0원 상품을 적극적으로 운영하여 신규 가입자 유치에 힘쓰고 있습니다.</li>
+        <li><strong>D 수입차 딜러사:</strong> 차량 출고와 리스 계약을 한 번에 진행할 수 있어 편리합니다. X4 물량 확보가 빠릅니다.</li>
+        <li><strong>E 온라인 전문 에이전시:</strong> SNS(인스타그램, 페이스북, 유튜브)를 통해 활발하게 X4 출고 후기를 공유하며 고객과의 소통을 강조합니다.</li>
+      </ol>
+
+      <p><strong>참고:</strong> 리스 업체 '순위'는 매월 프로모션 조건에 따라 변동됩니다. 2026년도 상반기에는 특히 신규 런칭 모델에 대한 금융사별 지원금 경쟁이 치열하여 X4 리스 혜택이 확대될 것으로 예상됩니다.</p>
+    </section>
+
+    <section id="faq">
+      <span id="faq-anchor" class="anchor"></span>
+      <h2>BMW X4 리스 관련 자주 묻는 질문(FAQ)</h2>
+
+      <h3>Q1. 리스 계약 시 꼭 확인해야 할 '숨겨진 비용'이 있나요?</h3>
+      <p>A. 네, 있습니다. X4 리스 견적을 받을 때 월 리스료 외에 반드시 '중도 해지 수수료'와 '사고 시 처리 규정'을 확인해야 합니다. 중도 해지 수수료는 계약 기간이 많이 남아있을수록 높게 책정되어 있습니다. 또한, 사고 발생 시 자차 처리 여부나 보험 처리 시 개인에게 부과될 수 있는 할증 여부도 꼼꼼히 체크해야 합니다.</p>
+
+      <h3>Q2. X4 리스 계약 만기 시 인수를 할지 반납을 할지 어떻게 결정하나요?</h3>
+      <p>A. 만기 시점의 차량 잔존가치와 중고차 시세를 비교하여 결정합니다. 만약 중고차 시세가 리스 계약 시 약정한 잔존가치보다 높다면 인수하는 것이 경제적으로 이득입니다. 반대로 시세가 낮다면 반납하는 것이 유리합니다. X4 M40i처럼 인기가 많은 모델은 잔존가치가 높게 책정되어 있어 인수 후 재판매가 유리한 경우가 많습니다.</p>
+
+      <h3>Q3. X4 리스 심사는 까다로운가요? 신용 점수에 영향이 있나요?</h3>
+      <p>A. X4는 고가 차량이므로 심사 기준이 일반 차량보다 엄격한 편입니다. 특히 2026년도 금융 규제가 강화되면서 개인 신용 점수와 소득 증빙 자료가 중요해졌습니다. 리스 심사 과정에서 신용 조회가 들어가지만, 단순 조회가 신용 점수에 미치는 영향은 미미합니다. 오히려 리스료를 연체 없이 납부하면 신용 관리에 도움이 될 수 있습니다.</p>
+
+      <h3>Q4. X4 리스 정보를 네이버, 구글, 유튜브에서 검색할 때 주의할 점은 무엇인가요?</h3>
+      <p>A. 네이버, 구글 검색 엔진에서 'X4 리스 가격', 'X4 견적 후기' 등을 검색하면 수많은 정보가 나옵니다. 유튜브(YouTube)에서는 X4 시승기와 함께 리스 프로모션 정보를 얻을 수 있습니다. 하지만, 대부분의 정보는 '광고'일 수 있으므로 특정 업체에 편향된 정보인지, 객관적인 비교 정보인지 구분하는 것이 중요합니다. 인공지능(AI) 기반의 챗지피티(ChatGPT)나 제미나이(Gemini) 같은 도구를 활용하여 일반적인 계약 원칙이나 장단점 차이점을 교차 검증하는 것도 현명한 방법입니다.</p>
+    </section>
+
+    <section id="content-expansion">
+      <span id="content-expansion-anchor" class="anchor"></span>
+      <h2>BMW X4 모델 선택 가이드 및 프로모션 활용법</h2>
+      <p>X4 리스를 고려하는 고객층은 크게 두 가지로 나뉩니다. 첫째는 X4 xDrive20i나 xDrive20d처럼 효율성을 중시하며 X4의 디자인을 선호하는 고객입니다. 둘째는 X4 M40i처럼 고성능 주행 퍼포먼스를 즐기려는 고객입니다. 각 모델별로 프로모션이나 '할인' 혜택의 종류가 달라지기 때문에, 고객의 운용 목적에 맞는 모델을 정확히 파악하는 것이 중요합니다.</p>
+
+      <img src="https://images.pexels.com/photos/103123/pexels-photo-103123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="자동차 모델 선택" class="content-image" />
+      <p class="image-caption">Image Source: Pexels.com - Choosing the right car model. X4 M40i vs standard X4 model comparison.</p>
+
+      <h3>X4 M40i 리스 vs. 일반 모델 리스: 차이점 비교</h3>
+      <ul>
+        <li><strong>X4 M40i (고성능 모델):</strong> 초기 가격이 높기 때문에 월 리스료가 비싸지만, 리스사에서는 고가 차량에 대한 프로모션 지원금이 더 많이 책정되는 경우가 있습니다. 특히, M40i는 감가상각이 적어 만기 시 잔존가치가 높을 가능성이 큽니다.</li>
+        <li><strong>X4 xDrive20i/20d (일반 모델):</strong> 연비 효율성이 좋고 월 납입금이 상대적으로 저렴합니다. '저렴한곳'을 찾는 소비자들은 기본 모델에 프로모션을 최대로 적용하여 월 납입금을 최소화하는 전략을 선호합니다.</li>
+      </ul>
+
+      <h3>2026년도 X4 리스 프로모션 분석</h3>
+      <p>2026년은 전반적인 차량 시장의 불확실성이 커지면서 리스사 간의 경쟁이 더욱 심화될 것으로 예상됩니다. 특히, '신규 가입' 고객에게 제공되는 '현금지원'이나 '상품권' 혜택이 늘어날 가능성이 있습니다. 또한, 재고 차량에 대한 할인율이 높아져 '저렴한곳'을 찾는 고객에게는 좋은 기회가 될 수 있습니다. 디시(DCinside)나 자동차 커뮤니티에서는 이러한 프로모션 정보가 실시간으로 공유되므로, 견적을 받기 전에 미리 정보를 수집하는 것이 좋습니다.</p>
+    </section>
+
+    <section id="contact">
+      <span id="contact-anchor" class="anchor"></span>
+      <h2>BMW X4 맞춤 견적 상담 문의</h2>
+      <p>X4 리스는 개인의 상황과 재정 상태에 따라 가장 적합한 조건이 달라집니다. 정확한 월 납입 금액과 프로모션 혜택, 계약 조건 등은 전문가와의 1:1 상담을 통해 확인하는 것이 가장 확실합니다. 아래 양식을 작성해 주시면 전문 에이전트가 신속하게 연락드리겠습니다.</p>
+
+      <form action="/submit-lease-inquiry" method="POST">
+        <h3>X4 리스 견적 문의 양식</h3>
+
+        <label for="name">이름<span style="color:red;">*</span></label>
+        <input type="text" id="name" name="name" required placeholder="예: 홍길동" />
+
+        <label for="phone">연락처<span style="color:red;">*</span></label>
+        <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678" pattern="[0-9\-]+" />
+
+        <label for="email">이메일 주소</label>
+        <input type="email" id="email" name="email" placeholder="예: example@email.com" />
+
+        <label for="model-type">희망 모델 선택<span style="color:red;">*</span></label>
+        <select id="model-type" name="model_type" required>
+          <option value="">-- 모델 선택 --</option>
+          <option value="X4 xDrive20i">X4 xDrive20i</option>
+          <option value="X4 xDrive30i">X4 xDrive30i</option>
+          <option value="X4 M40i">X4 M40i</option>
+          <option value="X4 xDrive20d">X4 xDrive20d</option>
+          <option value="미정">미정 (전문가 추천 요청)</option>
+        </select>
+
+        <label for="lease-term">희망 리스 기간 (개월)<span style="color:red;">*</span></label>
+        <select id="lease-term" name="lease_term" required>
+          <option value="">-- 기간 선택 --</option>
+          <option value="36">36개월</option>
+          <option value="48">48개월</option>
+          <option value="60">60개월</option>
+        </select>
+
+        <label for="down-payment">초기 비용 희망 조건<span style="color:red;">*</span></label>
+        <select id="down-payment" name="down_payment" required>
+          <option value="">-- 조건 선택 --</option>
+          <option value="보증금 0%">보증금 0% (초기 비용 없음)</option>
+          <option value="보증금 10%">보증금 10%</option>
+          <option value="선납금 10%">선납금 10%</option>
+          <option value="보증금 20%">보증금 20%</option>
+        </select>
+
+        <label for="message">추가 문의 사항 (원하는 할인, 특이사항, 사업자 여부 등)</label>
+        <textarea id="message" name="message" rows="4" placeholder="예: 사업자 리스 상담 희망, 2026년 신규 혜택 문의"></textarea>
+
+        <button type="submit" class="btn-cta">견적 문의 보내기</button>
+      </form>
+    </section>
+
+  </div>
+
+  <script>
+    // Smooth scrolling for internal anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+  
